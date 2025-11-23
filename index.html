@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Fatih Mehmet Aldemir Panosu</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.11.0/sha256.min.js"></script>
 <style>
 /* === GENEL STİLLER === */
 * { 
@@ -1420,7 +1421,6 @@ function formatExcelDate(excelDate) {
     return excelDate;
 }
 // === MODAL VE EXCEL İŞLEVLERİ ===
-// === MODAL VE AYARLAR ===
 const settingsModal = document.getElementById('settingsModal');
 const settingsBtn = document.getElementById('settingsBtn');
 const closeModalBtn = document.getElementById('closeModal');
@@ -1434,18 +1434,156 @@ const saveAnnouncementLinkBtn = document.getElementById('saveAnnouncementLinkBtn
 
 // Modal Aç/Kapa
 settingsBtn.addEventListener('click', () => {
-  const board = window.digitalBoard;
-  // Tarihleri inputlara doldur (Format: DD.MM.YYYY HH:mm)
-  if(board.yksTargetDate) {
-      const d = new Date(board.yksTargetDate);
-      yksDateInput.value = `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  }
-  if(board.lgsTargetDate) {
-      const d = new Date(board.lgsTargetDate);
-      lgsDateInput.value = `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  }
-  announcementLinkInput.value = document.getElementById("announcementFrame").src;
-  settingsModal.style.display = 'flex';
+    // ----------------------------------------------------
+    // KESİN ÇÖZÜM KODU
+    // ----------------------------------------------------
+    
+    // Parola '2468' için doğru SHA-256 hash'i 
+    const adminPasswordHash = '3328d5e248849611b502f266362462dd893b8aabab26853344b3ca7b6035c7ac'; 
+
+    // Parola girişi için özel bir modal oluştur
+    const passwordModal = document.createElement('div');
+    passwordModal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+    `;
+    
+    const passwordContent = document.createElement('div');
+    passwordContent.style.cssText = `
+        background: #f3f6fa;
+        padding: 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    `;
+    
+    const passwordTitle = document.createElement('h3');
+    passwordTitle.textContent = 'Parola Girişi';
+    passwordTitle.style.cssText = 'color: #2f26bf; margin-bottom: 20px;';
+    
+    const passwordInput = document.createElement('input');
+    passwordInput.type = 'password'; // BU SATIR DEĞİŞTİ - artık password tipinde
+    passwordInput.placeholder = 'Parolanızı girin...';
+    passwordInput.style.cssText = `
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
+    `;
+    
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.cssText = 'display: flex; gap: 10px; justify-content: center;';
+    
+    const confirmBtn = document.createElement('button');
+    confirmBtn.textContent = 'Giriş';
+    confirmBtn.style.cssText = `
+        background: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 700;
+    `;
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'İptal';
+    cancelBtn.style.cssText = `
+        background: #dc3545;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 700;
+    `;
+    
+    // Elementleri birleştir
+    buttonContainer.appendChild(confirmBtn);
+    buttonContainer.appendChild(cancelBtn);
+    
+    passwordContent.appendChild(passwordTitle);
+    passwordContent.appendChild(passwordInput);
+    passwordContent.appendChild(buttonContainer);
+    passwordModal.appendChild(passwordContent);
+    document.body.appendChild(passwordModal);
+    
+    // Input'a odaklan
+    passwordInput.focus();
+    
+    // Enter tuşu ile gönderme
+    passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            confirmBtn.click();
+        }
+    });
+    
+    // Giriş butonu işlevi
+    confirmBtn.addEventListener('click', () => {
+        const userInput = passwordInput.value.trim();
+        
+        if (userInput === '') {
+            window.digitalBoard.showNotification('Lütfen parola girin!', 'warning');
+            return;
+        }
+        
+        // Hash hesaplama
+        const userInputHash = sha256(userInput.toLowerCase());
+        
+        console.log('*** PAROLA KONTROL BİLGİSİ ***');
+        console.log('GİRİLEN PAROLA HASHİ:', userInputHash);
+        console.log('KAYITLI PAROLA HASHİ:', adminPasswordHash);
+        console.log('******************************');
+        
+        // Hash karşılaştırma
+        if (userInputHash !== adminPasswordHash) {
+            window.digitalBoard.showNotification('Hatalı parola! Erişim engellendi.', 'error');
+            passwordInput.value = '';
+            passwordInput.focus();
+            return;
+        }
+        
+        // Parola doğru ise modalı kapat ve ayar modalını aç
+        document.body.removeChild(passwordModal);
+        
+        // Ayar modalını aç (orijinal kodun devamı)
+        const board = window.digitalBoard; 
+        if(board.yksTargetDate) { 
+            const d = new Date(board.yksTargetDate); 
+            yksDateInput.value = `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`; 
+        } 
+        if(board.lgsTargetDate) { 
+            const d = new Date(board.lgsTargetDate); 
+            lgsDateInput.value = `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`; 
+        } 
+        announcementLinkInput.value = document.getElementById("announcementFrame").src; 
+        settingsModal.style.display = 'flex';
+    });
+    
+    // İptal butonu işlevi
+    cancelBtn.addEventListener('click', () => {
+        document.body.removeChild(passwordModal);
+    });
+    
+    // Dışarı tıklayarak kapatma
+    passwordModal.addEventListener('click', (e) => {
+        if (e.target === passwordModal) {
+            document.body.removeChild(passwordModal);
+        }
+    });
 });
 
 closeModalBtn.addEventListener('click', () => { settingsModal.style.display = 'none'; });
