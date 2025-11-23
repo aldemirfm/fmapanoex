@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Fatih Mehmet Aldemir Panosu</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+/* === GENEL STİLLER === */
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+}
+
+html, body { 
+  width: 100%; 
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f3f6fa;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* === HEADER STİLLERİ === */
+header {
+  height: 10vh; /* DEĞİŞTİ: Başlık yüksekliği 12vh'den 8vh'ye düşürüldü */
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2vw; 
+  background: linear-gradient(90deg, #2f26bf, #0D1A36);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  z-index: 10;
+}
+
+#headerLeft { 
+  flex: 1; 
+  text-align: left; 
+  display: flex;
+  align-items: center;
+}
+
+#headerLeft h1 {
+  /* Yazı boyutu: Ekran genişliğine ve yüksekliğine göre dinamik */
+  font-size: min(2vw, 3.2vh); 
+  font-weight: 900; 
+  color: #fff; 
+  line-height: 1.1; 
+  white-space: nowrap; 
+}
+
+#headerCenter { 
+  flex: 0 0 auto; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  padding: 0 20px;
+}
+
+#schoolLogo { 
+  max-height: 7vh; /* DEĞİŞTİ: Logo yüksekliği başlığa uyacak şekilde 7vh yapıldı */
+  width: auto; 
+  object-fit: contain; 
+}
+
+#headerRight { 
+  flex: 1; 
+  display: flex; 
+  flex-direction: row; /* Dikeyden Yataya çevrildi */
+  align-items: center; /* Öğeleri dikeyde ortalar */
+  justify-content: flex-end; /* Öğeleri sağa yaslar */
+  min-width: 200px;
+  gap: 15px; /* Tarih ve saat arasına boşluk ekler */
+}
+
+#dayMonth { 
+  font-size: 3vh; 
+  font-weight: 700; 
+  color: #FFFFFF; 
+  line-height: 1.2;
+}
+
+#time { 
+  font-size: 6vh; 
+  font-weight: 800; 
+  color: #FFFFFF; 
+  line-height: 1;
+}
+
+/* === ANA GRID YAPISI === */
+main {
+  flex: 1; 
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, minmax(0, 1fr)); 
+  gap: 1vh; 
+  padding: 1vh;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+/* === KUTU STİLLERİ === */
+.box {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  text-align: center;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 1vh; 
+  font-size: 1em;
+  font-weight: 700;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.box:hover { 
+  transform: translateY(-4px); 
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.12); 
+}
+
+.boxTitle {
+  width: 100%;
+  text-align: center;
+  font-size: 3vh; 
+  font-weight: 800;
+  padding-bottom: 0.5vh;
+  margin-bottom: 0.5vh;
+  border-bottom: 2px solid rgba(255,255,255,0.4);
+}
+
+/* === KUTU POZİSYONLARI === */
+#nobetci {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  background: linear-gradient(180deg, #000000, #202d58);
+}
+
+#ortakutuBox {
+  grid-column: 2 / 4;
+  grid-row: 1 / 4;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  padding: 0;
+}
+
+#examCountdown {
+  grid-column: 1;
+  grid-row: 3 / 5; 
+  background: linear-gradient(0deg, #ff0000, #000000);
+}
+
+#weatherBox {
+  grid-column: 4;
+  grid-row: 1 / 3;
+  background: linear-gradient(0deg, #821590, #000000);
+  position: relative;
+  overflow: hidden;
+}
+
+#islam {
+  grid-column: 2 / 4;
+  grid-row: 4;
+  background: linear-gradient(0deg, #ffffff, #fffcd4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+#menuBox {
+  grid-column: 4;
+  grid-row: 3 / 5;
+  background: linear-gradient(180deg, #000000, #1d6915);
+}
+
+/* === İÇERİK STİLLERİ === */
+#nobetciList { 
+  text-align: left; 
+  font-size: 1em; 
+}
+
+.nobetPlace { 
+  color: #ffd63e;
+  font-weight: 700;
+  font-size: 1.2em;
+  display: inline-block;
+  width: 35%; 
+  vertical-align: top;
+}
+
+.nobetTeacher { 
+  color: #ffffff;
+  font-size: 1.2em;
+  display: inline-block;
+  width: 60%;
+}
+
+.nobetRow { 
+  margin-bottom: 0.5vh; 
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.nobetRow:last-child {
+  border-bottom: none;
+}
+
+#nobetci .boxTitle,
+#weatherBox .boxTitle,
+#menuBox .boxTitle {
+  color: #ffd63e;
+  font-size: 3vh;
+}
+
+.announcementText,
+#box1Content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  font-weight: 700;
+  padding: 10px;
+  overflow: hidden;
+  white-space: normal; 
+  line-height: 1.2; 
+}
+
+.announcementText {
+  font-size: 3em;
+}
+
+/* === HAVA DURUMU STİLLERİ === */
+#currentWeather { 
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start; /* DEĞİŞTİ: İçeriği sola yaslamak için */
+  gap: 1vw;
+  width: 100%;
+  height: 60%;
+  position: relative;
+  z-index: 2;
+  padding-left: 20px; /* Opsiyonel: Sola biraz boşluk bırakır */
+}
+
+#currentWeather img { 
+  /* BURASI GÜNCELLENDİ: 10vh -> 16vh */
+  width: 25vh; 
+  height: 25vh; 
+  animation: weatherIconMove 3s ease-in-out infinite,
+  weatherIconGlow 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(0, 140, 255, 0.8));
+  position: relative;
+  z-index: 2;
+}
+
+#temp {
+  font-size: 5vh; 
+  font-weight: 900;
+  color: #ffffff;
+  position: relative;
+  z-index: 2;
+  line-height: 1;
+  text-shadow: 0 0 5px #002bff;
+  animation: neonGlow 2s ease-in-out infinite alternate;
+}
+
+#desc {
+  font-size: 3vh; 
+  font-weight: 900;
+  color: #ffffff;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 0 5px #002bff;
+}
+
+.forecast { 
+  display: flex; 
+  justify-content: space-around; 
+  width: 100%;
+  height: 40%;
+  font-size: 11.5em;
+  position: relative;
+  z-index: 2;
+  margin-top: 1vh !important;
+  margin-bottom: 0.5vh !important;
+  text-shadow: 0 0 5px #002bff;
+}
+
+.forecast .day { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  padding: px; 
+}
+
+.forecast .dayName { 
+  font-weight: 900; 
+  font-size: 3vh; 
+  margin-bottom: 2px; 
+  color: #ffffff; 
+}
+
+.forecast .temp { 
+  font-size: 3vh; 
+  font-weight: 900; 
+  color: yellow; 
+}
+
+/* === SINAV GERİ SAYIM === */
+#examCountdown {
+  display: flex; 
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 5px; 
+  height: 100%;
+  padding: 0 1vw;
+}
+
+.countdownItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  width: 48%;
+}
+
+.countdownItem:first-child {
+  border-right: 2px solid rgba(255,255,255,0.5);
+  padding-right: 1vw;
+}
+
+.countdownItem:last-child {
+  padding-left: 1vw;
+}
+
+.countdownTitle {
+  font-size: 5vh;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 2px;
+}
+
+.countdownValue {
+  font-size: 6vh;
+  font-weight: 900;
+  color: #00ff00;
+  animation: blink 1.5s infinite;
+  margin: 1px 0;
+  line-height: 1;
+}
+
+.countdownLabel {
+  font-size: 1.8vh; 
+  font-weight: 700;
+  color: white;
+  margin-top: 1.5vh;
+}
+
+/* === YEMEK LİSTESİ === */
+#menuList {
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  padding: 5px;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  line-height: 1.4; 
+  white-space: normal; 
+}  
+
+.menu-row {
+  width: 100%;
+  padding: 0.5vh 0; 
+  margin-bottom: 2px;
+  color: #ffffff;
+  font-weight: 700;
+  line-height: 1.4; 
+}
+
+.menu-row:last-child {
+  border-bottom: none !important;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* === MARQUEE === */
+#marquee {
+  flex: 0 0 auto;
+  height: 8vh; 
+  background: #003366;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-size: 6vh; 
+  font-weight: 800;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1000;
+}
+
+#marquee span {
+  position: absolute;
+  white-space: nowrap;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 100%;
+  animation: scrollText 10s linear infinite;
+}
+@keyframes scrollText {
+  0% { left: 100%; transform: translateY(-50%) translateX(0); }
+  100% { left: 0; transform: translateY(-50%) translateX(-100%); }
+}
+
+/* === BİLDİRİM SİSTEMİ === */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 25px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  z-index: 10000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transform: translateX(150%);
+  transition: transform 0.3s ease;
+}
+.notification.show { transform: translateX(0); }
+.notification.success { background: #28a745; }
+.notification.warning { background: #ffc107; color: #212529; }
+.notification.error { background: #dc3545; }
+
+/* === ANİMASYONLAR === */
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+@keyframes weatherIconMove {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+@keyframes weatherIconGlow {
+  0%   { filter: drop-shadow(0 0 6px rgba(0, 140, 255, .5)); }
+  50%  { filter: drop-shadow(0 0 22px rgba(0, 140, 255, .95)); }
+  100% { filter: drop-shadow(0 0 6px rgba(0, 140, 255, .5)); }
+}
+
+#weatherAnimation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Kar/Yağmur vb. stilleri */
+.snow-flake { position: absolute; top: -50px; background: transparent; pointer-events: none; filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8)); }
+.snow-heavy-small { width: 20px; height: 20px; animation: snow-heavy 6s linear infinite; }
+.snow-heavy-medium { width: 30px; height: 30px; animation: snow-heavy 8s linear infinite; }
+.snow-heavy-large { width: 40px; height: 40px; animation: snow-heavy 12s linear infinite; }
+.snow-light-small { width: 25px; height: 25px; animation: snow-light 15s linear infinite; }
+.snow-light-medium { width: 35px; height: 35px; animation: snow-light 20s linear infinite; }
+.snow-light-large { width: 45px; height: 45px; animation: snow-light 25s linear infinite; }
+
+@keyframes snow-heavy {
+  0% { transform: translateY(-50px) translateX(0) rotate(0deg); opacity: 0; }
+  5% { opacity: 0.9; }
+  95% { opacity: 0.9; }
+  100% { transform: translateY(100vh) translateX(80px) rotate(540deg); opacity: 0; }
+}
+@keyframes snow-light {
+  0% { transform: translateY(-50px) translateX(-30px) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.7; }
+  100% { transform: translateY(100vh) translateX(30px) rotate(360deg); opacity: 0; }
+}
+
+.rain-drop { position: absolute; top: -20px; background: linear-gradient(to bottom, transparent, #87CEEB); animation: rain-fall linear infinite; border-radius: 50%; }
+@keyframes rain-fall {
+  0% { transform: translateY(-20px); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+.sunny-img { position: absolute; top: 40%; left: -100px; width: 80px; height: auto; animation: moveSunny 30s linear infinite, pulseSunny 3s ease-in-out infinite; opacity: 0.6; }
+@keyframes moveSunny { 0% { left: -100px; } 100% { left: 110%; } }
+@keyframes pulseSunny { 0%, 100% { transform: scale(1); } 50% { transform: scale(13); } }
+
+.cloud-img { position: absolute; width: 100px; height: auto; opacity: 0.8; animation: cloud-move linear infinite; }
+@keyframes cloud-move { 0% { transform: translateX(-150px); } 100% { transform: translateX(110vw); } }
+
+.fog { position: absolute; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent); animation: fog-move 10s linear infinite; }
+@keyframes fog-move { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+/* === RESPONSIVE TASARIM === */
+@media (max-width: 1200px) {
+  main { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(6, 1fr); }
+  #ortakutuBox { grid-column: 1 / 3; grid-row: 1 / 3; }
+  #nobetci { grid-column: 1; grid-row: 3 / 5; }
+  #examCountdown { grid-column: 2; grid-row: 3 / 5; }
+  #weatherBox { grid-column: 1; grid-row: 5 / 7; }
+  #islam { grid-column: 2; grid-row: 5; }
+  #menuBox { grid-column: 2; grid-row: 6; }
+}
+
+@media (max-width: 768px) {
+  main { grid-template-columns: 1fr; grid-template-rows: repeat(8, auto); }
+  #ortakutuBox { grid-column: 1; grid-row: 1 / 3; }
+  #nobetci { grid-column: 1; grid-row: 3 / 4; }
+  #examCountdown { grid-column: 1; grid-row: 4 / 5; }
+  #weatherBox { grid-column: 1; grid-row: 5 / 6; }
+  #islam { grid-column: 1; grid-row: 6 / 7; }
+  #menuBox { grid-column: 1; grid-row: 7 / 8; }
+  
+  header { flex-direction: column; padding: 10px; height: auto; }
+  #headerLeft h1 { font-size: 1.5em; text-align: center; white-space: normal; }
+  #headerRight { justify-content: center; margin-top: 10px; align-items: center; }
+  #dayMonth { font-size: 1.8em; }
+  #time { font-size: 2.5em; }
+  #schoolLogo { max-height: 80px; max-width: 80px; margin: 10px 0; }
+}
+
+@media (max-width: 480px) {
+  #dayMonth { font-size: 1.5em; }
+  #time { font-size: 2em; }
+  .boxTitle { font-size: 1.5em; }
+  #marquee { font-size: 3em; min-height: 70px; }
+}
+
+#islam .boxTitle { display: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* === AYARLAR MODALI STİLLERİ === */
+#settingsBtn {
+  position: fixed;
+  top: 11vh;
+  right: 1vh;
+  width: 50px;
+  height: 50px;
+  background: #000000;
+  color: #0d1a36;
+  border: none;
+  border-radius: 50%;
+  font-size: 2em;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 100;
+  transition: background 0.3s, transform 0.3s;
+}
+
+#settingsBtn:hover {
+  background: #e0a800;
+  transform: scale(1.05);
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #f3f6fa;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.modal-content h3 {
+  color: #2f26bf;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 10px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 2em;
+  font-weight: bold;
+  cursor: pointer;
+  color: #dc3545;
+  line-height: 1;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: #0d1a36;
+}
+
+.form-group input[type="date"],
+.form-group input[type="file"],
+.form-group input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.form-group button {
+  background: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background 0.3s;
+}
+
+.form-group button:hover {
+  background: #1e7e34;
+}
+
+/* === EXCEL YÜKLEME STİLLERİ === */
+.file-input-container {
+  position: relative;
+  margin: 15px 0;
+}
+
+.file-input-label {
+  display: inline-block;
+  background: #007bff;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.3s;
+  text-align: center;
+  width: 100%;
+  font-size: 16px;
+}
+
+.file-input-label:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+}
+
+#excelFile {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+}
+
+.file-info {
+  margin-top: 10px;
+  padding: 12px;
+  background: #e9ecef;
+  border-radius: 5px;
+  font-size: 14px;
+  border-left: 4px solid #28a745;
+}
+
+.file-info strong {
+  color: #28a745;
+}
+
+.excel-buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.excel-btn {
+  background: #28a745;
+  color: white;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.3s;
+  flex: 1;
+  min-width: 140px;
+  font-size: 14px;
+}
+
+.excel-btn:hover {
+  background: #1e7e34;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.excel-btn:active {
+  transform: translateY(0);
+}
+
+.excel-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+.excel-btn.loading {
+  background: #ff9800;
+  cursor: not-allowed;
+}
+
+.excel-btn.loading:hover {
+  transform: none;
+}
+</style>
+</head>
+<body>
+<header role="banner">
+  <div id="headerLeft"><h1>AHMED İSLAMOĞLU<br>ANADOLU İMAM HATİP LİSESİ</h1></div>
+  <div id="headerCenter"><img src="https://imgr.tr/i/i691b09883ef4f" alt="Okul Logosu" id="schoolLogo"></div>
+  <div id="headerRight">
+    <span id="dayMonth" aria-live="polite"></span>
+    <span id="time" aria-live="polite"></span>
+  </div>
+</header>
+
+<main role="main">
+  <section class="box" id="nobetci" aria-labelledby="nobetci-title">
+    <h2 id="nobetci-title" class="boxTitle">NÖBETÇİ ÖĞRETMENLER</h2>
+    <div id="nobetciList">Yükleniyor...</div>
+  </section>
+
+<section class="box" id="ortakutuBox" aria-label="Okul Duyuruları ve Etkinlikler">
+    <iframe 
+        id="announcementFrame"
+        src="https://docs.google.com/presentation/d/e/2PACX-1vR0T5xEulNn5HLfQDgmlyhxfL7tqibdbVafqiEEUg7ITXEaBkWeqb5U7M7NCV2OaQ/pubembed?start=true&loop=true&delayms=3000" 
+        style="border: 0; width: 100%; height: 100%;" 
+        frameborder="0" 
+        allowfullscreen="true" 
+        mozallowfullscreen="true" 
+        webkitallowfullscreen="true">
+    </iframe>
+  </section>
+
+  <section class="box" id="examCountdown" aria-labelledby="exam-title">
+    <h2 id="exam-title" class="sr-only">Sınav Geri Sayım</h2>
+    <div class="countdownItem">
+      <div class="countdownTitle">YKS</div>
+      <div class="countdownValue" id="yksCountdownNum">--</div>
+      <div class="countdownLabel">GÜN</div>
+      <div class="countdownValue" id="yksCountdownHour">--</div>
+      <div class="countdownLabel">SAAT</div>
+    </div>
+    <div class="countdownItem">
+      <div class="countdownTitle">LGS</div>
+      <div class="countdownValue" id="lgsCountdownNum">--</div>
+      <div class="countdownLabel">GÜN</div>
+      <div class="countdownValue" id="lgsCountdownHour">--</div>
+      <div class="countdownLabel">SAAT</div>
+    </div>
+  </section>
+
+  <section class="box" id="weatherBox" aria-labelledby="weather-title">
+    <h2 id="weather-title" class="boxTitle">HAVA DURUMU</h2>
+    <div id="weatherAnimation"></div>
+    <div id="currentWeather">
+      <img id="weatherIcon" src="" alt="Hava durumu ikonu">
+      <div>
+        <div id="temp">--°C</div>
+        <div id="desc">Yükleniyor...</div>
+      </div>
+    </div>
+    <div class="forecast">
+      <div class="day"><div class="dayName">--</div><div class="temp">--°C</div></div>
+      <div class="day"><div class="dayName">--</div><div class="temp">--°C</div></div>
+      <div class="day"><div class="dayName">--</div><div class="temp">--°C</div></div>
+    </div>
+  </section>
+
+  <section class="box" id="islam" aria-labelledby="quote-title">
+    <h2 id="quote-title" class="sr-only">Günlük Söz</h2>
+    <div id="box1Content">Yükleniyor...</div>
+  </section>
+
+  <section class="box" id="menuBox" aria-labelledby="menu-title">
+    <h2 id="menu-title" class="boxTitle">YEMEK LİSTESİ</h2>
+    <div id="menuList">Yükleniyor...</div>
+  </section>
+</main>
+
+<div id="marquee" aria-live="polite"><span>HOŞ GELDİNİZ</span></div>
+
+<div class="sr-only" aria-live="polite" id="live-region"></div>
+
+<button id="settingsBtn" title="Ayarlar Paneli">⚙️</button>
+
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal-content">
+    <span class="modal-close" id="closeModal">&times;</span>
+    <h3>⚙️ Pano Ayarları ve Veri Yükleme</h3>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div class="form-group">
+          <h4>📅 Sınav Tarihleri</h4>
+          <label>YKS Tarihi:</label>
+          <input type="text" id="yksDate" placeholder="20.06.2026 10:30">
+          <label>LGS Tarihi:</label>
+          <input type="text" id="lgsDate" placeholder="14.06.2026 09:30">
+          <button id="saveExamDatesBtn">Tarihleri Kaydet</button>
+        </div>
+        <div class="form-group">
+          <h4>🖼️ Slayt / Duyuru</h4>
+          <label>Google Slayt Bağlantısı:</label>
+          <input type="text" id="announcementLink" placeholder="Slayt bağlantısı...">
+          <button id="saveAnnouncementLinkBtn">Bağlantıyı Kaydet</button>
+        </div>
+    </div>
+
+    <h4 style="border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; color:#2f26bf;">📄 Excel Veri Yükleme Alanları</h4>
+    
+    <div class="upload-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+        
+        <div class="form-group" style="border-left: 5px solid #007bff; background: #f8f9fa;">
+            <h5>👨‍🏫 Nöbetçi Listesi</h5>
+            <input type="file" id="fileNobetci" accept=".xlsx, .xls" style="margin-bottom: 10px;">
+            <button id="btnNobetci" style="background: #007bff; width: 100%;">Listeyi Yükle</button>
+            <small style="display:block; margin-top:5px; color:#666;">Format: Yer | Pzt | Salı...</small>
+        </div>
+
+        <div class="form-group" style="border-left: 5px solid #28a745; background: #f8f9fa;">
+            <h5>🍽️ Yemek Listesi</h5>
+            <input type="file" id="fileMenu" accept=".xlsx, .xls" style="margin-bottom: 10px;">
+            <button id="btnMenu" style="background: #28a745; width: 100%;">Menüyü Yükle</button>
+            <small style="display:block; margin-top:5px; color:#666;">Format: Tarih | Yemekler</small>
+        </div>
+
+        <div class="form-group" style="border-left: 5px solid #ffc107; background: #fff3cd;">
+            <h5>💬 Günlük Söz</h5>
+            <input type="file" id="fileSoz" accept=".xlsx, .xls" style="margin-bottom: 10px;">
+            <button id="btnSoz" style="background: #ffc107; color: #000; width: 100%;">Sözleri Yükle</button>
+            <small style="display:block; margin-top:5px; color:#666;">Format: Tarih | Söz</small>
+        </div>
+
+        <div class="form-group" style="border-left: 5px solid #dc3545; background: #f8f9fa;">
+            <h5>🏃 Kayan Yazı (Marquee)</h5>
+            <input type="file" id="fileMarquee" accept=".xlsx, .xls" style="margin-bottom: 10px;">
+            <button id="btnMarquee" style="background: #dc3545; width: 100%;">Yazıyı Yükle</button>
+            <small style="display:block; margin-top:5px; color:#666;">Hücre A1'deki metni alır.</small>
+        </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// === DİJİTAL PANO SINIFI ===
+class DigitalBoard {
+  constructor() {
+    this.weatherAnim = new WeatherAnimation();
+    this.yksTargetDate = "2026-06-20T10:30:00";
+    this.lgsTargetDate = "2026-06-14T09:30:00";
+    this.localData = {
+        nobetci: [],
+        menu: {},
+        soz: {},
+        marquee: "HOŞ GELDİNİZ"
+    };
+    this.loadSettings();
+    this.init();
+  }
+  
+  init() {
+    this.setupEventListeners();
+    this.startTimers();
+    this.loadInitialData();
+    this.showNotification('Fatih Mehmet ALDEMİR Dijital Pano Başlatıldı', 'success');
+  }
+  
+  setupEventListeners() {
+    window.addEventListener("resize", this.handleResize.bind(this));
+    // Fullscreen otomatik açma kaldırıldı
+  }
+  
+  handleResize() {
+    this.fitTextToBox();
+    this.fitMenuText();
+    this.fitNobetciText(); 
+  }
+  
+  startTimers() {
+    setInterval(this.updateDateTime.bind(this), 1000);
+    this.updateDateTime();
+    setInterval(this.updateExamCountdowns.bind(this), 1000);
+    this.updateWeatherHourly();
+  }
+  
+loadInitialData() {
+    this.loadWeather();
+    this.updateDisplayFromLocalData();
+    
+    // Nöbetçi verisi kontrolü
+    if (this.localData.nobetci && this.localData.nobetci.length > 1) {
+        console.log("LocalStorage'dan nöbetçi verisi yüklendi:", this.localData.nobetci);
+        this.updateDutyTeachersDisplay();
+    }
+}
+
+  showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    notification.setAttribute('role', 'alert');
+    document.body.appendChild(notification);
+    setTimeout(() => notification.classList.add('show'), 100);
+    setTimeout(() => {
+      notification.classList.remove('show');
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 300);
+    }, 4000);
+  }
+
+  // === METİN SIĞDIRMA METODLARI ===
+  fitTextToBox() {
+    const container = document.getElementById("box1Content");
+    if (!container) return;
+    const initialOverflow = container.style.overflow;
+    container.style.overflow = 'visible'; 
+    const maxHeight = container.clientHeight;
+    const maxWidth = container.clientWidth;
+    let fontSize = 8;
+    container.style.fontSize = fontSize + "px";
+    while(container.scrollHeight <= maxHeight && container.scrollWidth <= maxWidth && fontSize < 50) {
+      fontSize += 1;
+      container.style.fontSize = fontSize + "px";
+    }
+    container.style.fontSize = (fontSize - 1) + "px";
+    container.style.overflow = initialOverflow;
+  }
+
+  fitMenuText() {
+    const container = document.getElementById("menuList");
+    if (!container) return;
+    const initialOverflow = container.style.overflow;
+    container.style.overflow = 'visible';
+    const maxHeight = container.clientHeight;
+    const maxWidth = container.clientWidth;
+    let fontSize = 2;
+    container.style.fontSize = fontSize + "px";
+    while(container.scrollHeight <= maxHeight && container.scrollWidth <= maxWidth && fontSize < 35) {
+      fontSize += 1;
+      container.style.fontSize = fontSize + "px";
+    }
+    container.style.fontSize = (fontSize - 1) + "px";
+    container.style.overflow = initialOverflow;
+  }
+
+// === Nöbetçi Listesini Sığdırma (GÜNCELLENMİŞ) ===
+  fitNobetciText() {
+    const container = document.getElementById("nobetciList");
+    if (!container) return;
+    
+    // Önceki stillemeden etkilenmemek için font boyutunu bir başlangıç değerine (örneğin 16px) ayarlayın
+    container.style.fontSize = "16px";
+    
+    const initialOverflow = container.style.overflow;
+    container.style.overflow = 'visible';
+    
+    const parentBox = document.getElementById("nobetci");
+    const titleHeight = parentBox.querySelector(".boxTitle").offsetHeight || 50;
+    // Toplam kutu yüksekliğinden başlık ve padding/margin alanlarını çıkarıyoruz. (1vh üst, 1vh alt padding + muhtemel 20px margin/title-padding)
+    const maxHeight = parentBox.clientHeight - titleHeight - 2 * parseFloat(getComputedStyle(parentBox).paddingTop) - 20; 
+    const maxWidth = parentBox.clientWidth - 2 * parseFloat(getComputedStyle(parentBox).paddingLeft); 
+
+    let fontSize = 116; 
+    container.style.fontSize = fontSize + "px";
+
+    // Sığana kadar küçült (minimum 8px)
+    while((container.scrollHeight > maxHeight || container.scrollWidth > maxWidth) && fontSize > 8) {
+      fontSize -= 1;
+      container.style.fontSize = fontSize + "px";
+    }
+
+    container.style.overflow = initialOverflow;
+  }
+
+  updateDateTime() {
+    const now = new Date();
+    const days = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
+    const months = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım"];
+    
+    const dayName = days[now.getDay()];
+    const dateNum = now.getDate();
+    const monthName = months[now.getMonth()];
+    const hours = now.getHours().toString().padStart(2,"0");
+    const minutes = now.getMinutes().toString().padStart(2,"0");
+    
+    document.getElementById("dayMonth").innerText = `${dayName}, ${dateNum} ${monthName}`;
+    document.getElementById("time").innerText = `${hours}:${minutes}`;
+  }
+
+  // === AYARLAR VE VERİ YÜKLEME ===
+  loadSettings() {
+    this.yksTargetDate = localStorage.getItem('yksTargetDate') || this.yksTargetDate;
+    this.lgsTargetDate = localStorage.getItem('lgsTargetDate') || this.lgsTargetDate;
+    
+    const announcementLink = localStorage.getItem('announcementLink');
+    const defaultAnnouncementLink = "https://docs.google.com/presentation/d/e/2PACX-1vR0T5xEulNn5HLfQDgmlyhxfL7tqibdbVafqiEEUg7ITXEaBkWeqb5U7M7NCV2OaQ/pubembed?start=true&loop=true&delayms=3000";
+    const frame = document.getElementById("announcementFrame");
+
+    if (announcementLink) {
+      frame.src = announcementLink;
+    } else {
+      frame.src = defaultAnnouncementLink;
+      localStorage.setItem('announcementLink', defaultAnnouncementLink);
+    }
+
+    const savedData = localStorage.getItem('localBoardData');
+    if (savedData) {
+        try {
+            this.localData = JSON.parse(savedData);
+        } catch(e) {
+            console.error("Yerel veri bozuk:", e);
+        }
+    }
+  }
+
+  updateDisplayFromLocalData() {
+    this.updateDutyTeachersDisplay();
+    this.updateMenuDisplay();
+    this.updateDailyQuoteDisplay();
+    this.updateMarqueeDisplay();
+    this.updateExamCountdowns();
+  }
+
+updateDutyTeachersDisplay() {
+    const listElement = document.getElementById("nobetciList");
+    const now = new Date();
+    
+    // Bugünün tarihini FARKLI FORMATLARDA hazırla
+    const todayStrDot = `${pad(now.getDate())}.${pad(now.getMonth() + 1)}.${now.getFullYear()}`; // 23.11.2025
+    const todayStrSlash = `${pad(now.getDate())}/${pad(now.getMonth() + 1)}/${now.getFullYear()}`; // 23/11/2025
+    
+    console.log("Aranan tarihler:", todayStrDot, "ve", todayStrSlash);
+
+    // 1. ADIM: VERİ KONTROLÜ
+    if (!this.localData.nobetci || this.localData.nobetci.length < 2) {
+        listElement.innerHTML = "Lütfen Ayarlar panelinden nöbetçi listesini yükleyin.";
+        this.fitNobetciText();
+        return;
+    }
+
+    const data = this.localData.nobetci;
+    const headers = data[0];
+    
+    console.log("Excel verisi:", data);
+    
+    // 2. ADIM: BUGÜNÜN VERİSİNİ BULMA (İLK SATIRI ATLA - başlık satırı)
+    const foundRow = data.find((row, index) => {
+        if (index === 0) return false; // Başlık satırını atla
+        if (!row || !row[0]) return false;
+        
+        // Excel'den gelen tarihi formatla
+        let dateFromRow = this.formatExcelDateForComparison(row[0]);
+        console.log("Excel'den gelen formatlanmış tarih:", dateFromRow);
+        
+        // İKİ FORMATTA DA KARŞILAŞTIR
+        return dateFromRow === todayStrDot || dateFromRow === todayStrSlash;
+    });
+
+    if (!foundRow) {
+        // Hata durumunda daha detaylı bilgi göster
+        const availableDates = data.slice(1).map(row => this.formatExcelDateForComparison(row[0])).join(', ');
+        listElement.innerHTML = `<div style="text-align:center; padding-top:20px; font-size:0.9em;">
+          Nöbetçi verisi bulunamadı.<br>
+          Bugün: ${todayStrDot} (nokta) / ${todayStrSlash} (slash)<br>
+          <small>Mevcut tarihler: ${availableDates}</small>
+        </div>`;
+        this.fitNobetciText();
+        return;
+    }
+
+    // 3. ADIM: HTML OLUŞTURMA
+    let output = "";
+    let foundTeacher = false;
+    
+    for (let i = 1; i < headers.length; i++) {
+        const placeName = headers[i];
+        const teacherNames = foundRow[i];
+        
+        if (placeName && teacherNames && teacherNames.toString().trim() !== "" && teacherNames.toString().trim() !== "NÖBET YOK") {
+            output += `<div class="nobetRow">`;
+            output += `<span class="nobetPlace">${placeName}:</span> `;
+            output += `<span class="nobetTeacher">${teacherNames.toString().replace(/\n/g, "<br>")}</span>`;
+            output += `</div>`;
+            foundTeacher = true;
+        }
+    }
+
+    listElement.innerHTML = output || "BUGÜN İÇİN NÖBETÇİ ÖĞRETMEN TANIMLANMADI";
+    this.fitNobetciText();
+}
+
+// YARDIMCI FONKSİYONLARI EKLEYİN
+formatExcelDateForComparison(dateVal) {
+    if (!dateVal) return "";
+    
+    console.log("Ham tarih değeri:", dateVal, "Tip:", typeof dateVal);
+    
+    // 1. Durum: "TARİH" başlığı ise
+    if (dateVal === "TARİH" || dateVal === "Tarih") {
+        return dateVal;
+    }
+    
+    // 2. Durum: ISO formatında tarih (2025-11-23T20:59:04.000Z)
+    if (typeof dateVal === 'string' && dateVal.includes('T') && dateVal.includes('Z')) {
+        const date = new Date(dateVal);
+        return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
+    }
+    
+    // 3. Durum: Date objesi
+    if (dateVal instanceof Date) {
+        return `${pad(dateVal.getDate())}.${pad(dateVal.getMonth() + 1)}.${dateVal.getFullYear()}`;
+    }
+    
+    // 4. Durum: String olarak gelirse direkt döndür
+    if (typeof dateVal === 'string') {
+        return dateVal.trim();
+    }
+    
+    // 5. Durum: Number ise (Excel seri numarası)
+    if (typeof dateVal === 'number') {
+        const date = new Date(Math.round((dateVal - 25569) * 86400 * 1000));
+        date.setHours(date.getHours() + 14);
+        return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
+    }
+    
+    return dateVal.toString();
+}
+normalizeDate(dateStr) {
+    // Tarihi normalize et: noktaları kaldır, tek format haline getir
+    return dateStr.toString().replace(/\./g, '');
+}
+
+  updateMenuDisplay() {
+      const menuListElement = document.getElementById("menuList");
+      const now = new Date();
+      const todayDateString = `${now.getDate().toString().padStart(2, "0")}.${(now.getMonth() + 1).toString().padStart(2, "0")}.${now.getFullYear()}`;
+      
+      let output = this.localData.menu[todayDateString] || "Bu güne ait yemek listesi yok.";
+      
+      if (output !== "Bu güne ait yemek listesi yok.") {
+          const foods = output.split("\n").filter(food => food.trim() !== "");
+          let formattedOutput = '';
+          foods.forEach((food, index) => formattedOutput += `<div class="menu-row">${food}</div>`);
+          menuListElement.innerHTML = formattedOutput;
+          this.fitMenuText();
+      } else {
+          menuListElement.innerHTML = `<div class="menu-row">${output}</div>`;
+      }
+  }
+
+  updateDailyQuoteDisplay() {
+      const islamElement = document.getElementById("box1Content");
+      const now = new Date();
+      const todayDateString = `${now.getDate().toString().padStart(2, "0")}.${(now.getMonth() + 1).toString().padStart(2, "0")}.${now.getFullYear()}`;
+      
+      let quote = this.localData.soz[todayDateString] || "Bu güne ait söz yok.";
+      
+      islamElement.innerHTML = quote.split("\n").join("<br>");
+      this.fitTextToBox();
+  }
+
+  updateMarqueeDisplay() {
+      const marqueeSpan = document.querySelector("#marquee span");
+      marqueeSpan.textContent = this.localData.marquee;
+  }
+
+  // === HAVA DURUMU KODLARI ===
+  static DEVELI_LAT = 38.38;
+  static DEVELI_LON = 35.53;
+
+  async loadWeather() {
+    const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${DigitalBoard.DEVELI_LAT}&longitude=${DigitalBoard.DEVELI_LON}&hourly=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Europe%2FIstanbul&forecast_days=4`;
+
+    try {
+      const response = await fetch(apiUrl);
+      if (!response.ok) throw new Error("Open-Meteo API başarısız.");
+      const data = await response.json();
+      
+      if (data.hourly && data.hourly.temperature_2m.length > 0) {
+          this.updateWeatherDisplay(data);
+      } else {
+           throw new Error("Veri alınamadı.");
+      }
+    } catch (error) {
+      console.error("Hava durumu hatası:", error);
+      this.showFallbackWeather();
+    }
+  }
+
+  updateWeatherDisplay(data) {
+    const now = new Date();
+    const currentHourIndex = now.getHours(); 
+    const temp = Math.round(data.hourly.temperature_2m[currentHourIndex]);
+    const weatherCode = data.hourly.weather_code[currentHourIndex];
+    const dailyData = data.daily;
+    const minTemp = dailyData.temperature_2m_min[0] ? Math.round(dailyData.temperature_2m_min[0]) : temp;
+    const maxTemp = dailyData.temperature_2m_max[0] ? Math.round(dailyData.temperature_2m_max[0]) : temp;
+    const { displayDesc, weatherType, iconUrl } = this.translateWeatherCode(weatherCode);
+
+    document.getElementById("temp").innerText = temp + "°C";
+    document.getElementById("desc").innerText = displayDesc;
+
+    let tempRangeElement = document.getElementById("tempRange");
+    if (!tempRangeElement) {
+        const tempDiv = document.querySelector("#currentWeather > div");
+        tempRangeElement = document.createElement("div");
+        tempRangeElement.id = "tempRange";
+        tempRangeElement.style.cssText = "font-size: 1.5em; font-weight: 800; color: #ffd63e; margin-top: 8px; text-shadow: 0 0 5px rgba(255, 214, 62, 0.7);";
+        tempDiv.appendChild(tempRangeElement);
+    }
+    
+    tempRangeElement.innerText = minTemp + "° / " + maxTemp + "°";
+    document.getElementById("weatherIcon").src = iconUrl;
+    this.weatherAnim.setWeather(weatherType);
+    this.updateForecastDisplay(dailyData);
+  }
+
+  translateWeatherCode(code) {
+      let displayDesc, weatherType, iconUrl;
+      switch (code) {
+          case 0: displayDesc="AÇIK"; weatherType="clear"; iconUrl='https://imgr.tr/i/i691b02a3b0180'; break;
+          case 1: displayDesc="GENELLİKLE AÇIK"; weatherType="clear"; iconUrl='https://imgr.tr/i/i691b02a3b0180'; break;
+          case 2: displayDesc="PARÇALI BULUTLU"; weatherType="scattered clouds"; iconUrl='https://imgr.tr/i/i691e8b42c4bde'; break;
+          case 3: displayDesc="ÇOK BULUTLU"; weatherType="cloudy"; iconUrl='https://imgr.tr/i/i691b02a399973'; break;
+          case 45: case 48: displayDesc="SİSLİ"; weatherType="fog"; iconUrl='https://imgr.tr/i/i691b010e3597d'; break;
+          case 51: case 53: case 56: displayDesc="ÇİSNTİ"; weatherType="light rain"; iconUrl='https://imgr.tr/i/i691b02a39af57'; break;
+          case 55: displayDesc="YOĞUN ÇİSNTİ"; weatherType="rain"; iconUrl='https://imgr.tr/i/i691b02a39af57'; break;
+          case 61: displayDesc="HAFİF YAĞMUR"; weatherType="light rain"; iconUrl='https://imgr.tr/i/i691b02a39af57'; break;
+          case 63: displayDesc="YAĞMURLU"; weatherType="rain"; iconUrl='https://imgr.tr/i/i691b02a39dcff'; break;
+          case 65: displayDesc="ŞİDDETLİ YAĞMUR"; weatherType="heavy rain"; iconUrl='https://imgr.tr/i/i691b02a39c71f'; break;
+          case 66: case 67: displayDesc="DONAN YAĞMUR"; weatherType="sleet"; iconUrl='https://imgr.tr/i/i691b02a39af57'; break;
+          case 71: displayDesc="HAFİF KAR"; weatherType="light snow"; iconUrl='https://imgr.tr/i/i691b02a3ac137'; break;
+          case 73: displayDesc="KAR YAĞIŞLI"; weatherType="snow"; iconUrl='https://imgr.tr/i/i691b02a3aeeee'; break;
+          case 75: displayDesc="YOĞUN KAR"; weatherType="heavy snow"; iconUrl='https://imgr.tr/i/i691b02a3aeeee'; break;
+          case 77: displayDesc="SULU KAR"; weatherType="sleet"; iconUrl='https://imgr.tr/i/i691b02a39af57'; break;
+          case 80: case 81: case 82: displayDesc="SAĞANAK YAĞIŞ"; weatherType="heavy rain"; iconUrl='https://imgr.tr/i/i691b02a39c71f'; break;
+          case 85: case 86: displayDesc="KAR SAĞANAĞI"; weatherType="heavy snow"; iconUrl='https://imgr.tr/i/i691b02a3aeeee'; break;
+          case 95: displayDesc="GÖK GÜRÜLTÜLÜ"; weatherType="thunderstorm"; iconUrl='https://imgr.tr/i/i691b02a3b1666'; break;
+          case 96: case 99: displayDesc="GÖK GÜRÜLTÜLÜ VE DOLU"; weatherType="hail"; iconUrl='https://imgr.tr/i/i691b02a3b1666'; break;
+          default: displayDesc="BİLİNMEYEN"; weatherType="cloudy"; iconUrl='https://imgr.tr/i/i691b02a399973'; break;
+      }
+      return { displayDesc, weatherType, iconUrl };
+  }
+
+  updateForecastDisplay(dailyData) {
+      const daysMap = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cts"];
+      const forecastContainer = document.querySelector("#weatherBox .forecast");
+      forecastContainer.innerHTML = '';
+      const startIndex = 1; 
+      for (let i = startIndex; i < startIndex + 3; i++) {
+          const minTemp = dailyData.temperature_2m_min[i];
+          const maxTemp = dailyData.temperature_2m_max[i];
+          if (minTemp === undefined || maxTemp === undefined) continue;
+          const date = new Date(dailyData.time[i]);
+          const dayName = daysMap[date.getDay()];
+          forecastContainer.innerHTML += `<div class="day"><div class="dayName">${dayName}</div><div class="temp">${Math.round(minTemp)}° / ${Math.round(maxTemp)}°</div></div>`;
+      }
+  }
+
+  showFallbackWeather() {
+    document.getElementById("temp").innerText = "--";
+    document.getElementById("desc").innerText = "❌ Veri alınamadı";
+    const tempRangeElement = document.getElementById("tempRange");
+    if (tempRangeElement) tempRangeElement.innerText = "--° / --°";
+    this.weatherAnim.setWeather('cloudy');
+  }
+
+  updateWeatherHourly() {
+    const now = new Date();
+    const delay = (60 - now.getMinutes())*60*1000 - now.getSeconds()*1000; 
+    setTimeout(() => {
+      this.loadWeather();
+      setInterval(this.loadWeather.bind(this), 3600000);
+    }, delay);
+  }
+
+  // === SINAV GERİ SAYIM KODLARI ===
+  updateExamCountdowns() {
+    this.countdown(this.yksTargetDate, "yksCountdownNum","yksCountdownHour");
+    this.countdown(this.lgsTargetDate, "lgsCountdownNum","lgsCountdownHour");
+  }
+
+  countdown(targetString, numEl, hourEl) {
+    const target = new Date(targetString); 
+    const now = new Date();
+    const diff = target - now;
+    if (diff <= 0) {
+      document.getElementById(numEl).innerText = "0";
+      document.getElementById(hourEl).innerText = "0";
+      return;
+    }
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    document.getElementById(numEl).innerText = days;
+    document.getElementById(hourEl).innerText = hours;
+  }
+}
+
+class WeatherAnimation {
+  constructor() {
+    this.container = document.getElementById('weatherAnimation');
+    this.currentWeather = '';
+  }
+  setWeather(weatherType) {
+    this.clearAnimation();
+    this.currentWeather = weatherType.toLowerCase();
+    switch(this.currentWeather) {
+      case 'rain': case 'heavy rain': this.createHeavyRain(); break;
+      case 'light rain': case 'drizzle': this.createLightRain(); break;
+      case 'snow': this.createHeavySnow(); break;
+      case 'light snow': this.createLightSnow(); break;
+      case 'clear': this.createSunny(); break;
+      case 'few clouds': this.createFewClouds(); break;
+      case 'scattered clouds': case 'cloudy': this.createCloudy(); break;
+      case 'fog': case 'mist': case 'haze': this.createFog(); break;
+      case 'thunderstorm': this.createThunderstorm(); break;
+      default: this.createCloudy();
+    }
+  }
+  createHeavyRain() { for (let i = 0; i < 150; i++) { const drop = document.createElement('div'); drop.className = 'rain-drop'; drop.style.left = `${Math.random() * 100}%`; drop.style.animationDuration = `${0.3 + Math.random() * 0.5}s`; drop.style.animationDelay = `${Math.random() * 1}s`; drop.style.width = '3px'; drop.style.height = '25px'; this.container.appendChild(drop); } }
+  createLightRain() { for (let i = 0; i < 50; i++) { const drop = document.createElement('div'); drop.className = 'rain-drop'; drop.style.left = `${Math.random() * 100}%`; drop.style.animationDuration = `${1 + Math.random() * 2}s`; drop.style.animationDelay = `${Math.random() * 3}s`; drop.style.width = '2px'; drop.style.height = '15px'; drop.style.opacity = '0.6'; this.container.appendChild(drop); } }
+  createHeavySnow() { const types = [{ class: 'snow-heavy-small', count: 25 }, { class: 'snow-heavy-medium', count: 20 }, { class: 'snow-heavy-large', count: 15 }]; types.forEach(type => { for (let i = 0; i < type.count; i++) { const snow = document.createElement('img'); snow.className = `snow-flake ${type.class}`; snow.src = 'https://imgr.tr/i/i691b02a397ce1'; snow.style.left = `${Math.random() * 100}%`; snow.style.animationDuration = `${4 + Math.random() * 4}s`; snow.style.animationDelay = `${Math.random() * 2}s`; this.container.appendChild(snow); } }); }
+  createLightSnow() { const types = [{ class: 'snow-light-small', count: 8 }, { class: 'snow-light-medium', count: 6 }, { class: 'snow-light-large', count: 4 }]; types.forEach(type => { for (let i = 0; i < type.count; i++) { const snow = document.createElement('img'); snow.className = `snow-flake ${type.class}`; snow.src = 'https://imgr.tr/i/i691b02a397ce1'; snow.style.left = `${Math.random() * 100}%`; snow.style.animationDuration = `${12 + Math.random() * 10}s`; snow.style.animationDelay = `${Math.random() * 5}s`; this.container.appendChild(snow); } }); }
+  createSunny() { for (let i = 0; i < 2; i++) { const sunny = document.createElement('img'); sunny.src = 'https://imgr.tr/i/i691b331a66f9c'; sunny.className = 'sunny-img'; sunny.style.top = `${40 + Math.random() * 20}%`; sunny.style.width = `${80 + Math.random() * 40}px`; sunny.style.animationDuration = `${10 + Math.random() * 10}s`; sunny.style.animationDelay = `${Math.random() * 10}s`; sunny.style.opacity = '0.4'; this.container.appendChild(sunny); } }
+  createFewClouds() { for (let i = 0; i < 2; i++) { const cloud = document.createElement('img'); cloud.src = 'https://imgr.tr/i/i691b02a395ee5'; cloud.className = 'cloud-img'; cloud.style.top = `${30 + Math.random() * 30}%`; cloud.style.width = `${80 + Math.random() * 40}px`; cloud.style.animationDuration = `${60 + Math.random() * 40}s`; cloud.style.animationDelay = `${Math.random() * 10}s`; cloud.style.opacity = '0.4'; this.container.appendChild(cloud); } }
+  createCloudy() { for (let i = 0; i < 5; i++) { const cloud = document.createElement('img'); cloud.src = 'https://imgr.tr/i/i691b02a395ee5'; cloud.className = 'cloud-img'; cloud.style.top = `${20 + Math.random() * 50}%`; cloud.style.width = `${150 + Math.random() * 100}px`; cloud.style.animationDuration = `${40 + Math.random() * 30}s`; cloud.style.animationDelay = `${Math.random() * 10}s`; this.container.appendChild(cloud); } }
+  createFog() { const fog = document.createElement('div'); fog.className = 'fog'; this.container.appendChild(fog); }
+  createThunderstorm() { this.createHeavyRain(); setInterval(() => { if (Math.random() > 0.7) { this.container.style.backgroundColor = 'rgba(255, 255, 255, 0.3)'; setTimeout(() => { this.container.style.backgroundColor = 'transparent'; }, 100); } }, 2000); }
+  clearAnimation() { this.container.innerHTML = ''; this.container.style.backgroundColor = 'transparent'; }
+}
+// === YARDIMCI TARİH FONKSİYONLARI (KOPYALAYIN VE DEĞİŞTİRİN) ===
+
+// Tek haneli sayıların önüne '0' ekler
+function pad(number) {
+    return number < 10 ? '0' + number : number;
+}
+
+// Excel'den gelen tarih seri numaralarını veya string'leri DD.MM.YYYY formatına çevirir
+function formatExcelDate(excelDate) {
+    // 1. Durum: Excel Seri Numarası (Örn: 45952)
+    if (typeof excelDate === 'number' && excelDate > 1000) { // Sadece büyük sayıları seri olarak kabul et
+        // Excel başlangıç tarihi: 1 Ocak 1900
+        const date = new Date(1900, 0, excelDate - 1); 
+        // JavaScript'in UTC ayarı nedeniyle olası sapmaları düzeltmek için yerel zamanı kullan
+        date.setHours(0, 0, 0, 0); 
+
+        return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
+    } 
+    
+    // 2. Durum: Tarih Stringi (Örn: "23.11.2025" veya "23.11.2025 Pazar")
+    else if (typeof excelDate === 'string') {
+        // DD.MM.YYYY formatını içeren kısmı Regex ile ayıklar
+        const match = excelDate.match(/(\d{2}\.\d{2}\.\d{4})/);
+        if (match) {
+            return match[1]; // Sadece DD.MM.YYYY kısmını döndür
+        }
+    }
+    
+    // Eğer formatlanamazsa, orijinal değeri döndür (bu da eşleşmeye çalışacaktır)
+    return excelDate;
+}
+// === MODAL VE EXCEL İŞLEVLERİ ===
+// === MODAL VE AYARLAR ===
+const settingsModal = document.getElementById('settingsModal');
+const settingsBtn = document.getElementById('settingsBtn');
+const closeModalBtn = document.getElementById('closeModal');
+
+// Tarih ve Slayt Elementleri
+const saveExamDatesBtn = document.getElementById('saveExamDatesBtn');
+const yksDateInput = document.getElementById('yksDate');
+const lgsDateInput = document.getElementById('lgsDate');
+const announcementLinkInput = document.getElementById('announcementLink');
+const saveAnnouncementLinkBtn = document.getElementById('saveAnnouncementLinkBtn');
+
+// Modal Aç/Kapa
+settingsBtn.addEventListener('click', () => {
+  const board = window.digitalBoard;
+  // Tarihleri inputlara doldur (Format: DD.MM.YYYY HH:mm)
+  if(board.yksTargetDate) {
+      const d = new Date(board.yksTargetDate);
+      yksDateInput.value = `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+  if(board.lgsTargetDate) {
+      const d = new Date(board.lgsTargetDate);
+      lgsDateInput.value = `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+  announcementLinkInput.value = document.getElementById("announcementFrame").src;
+  settingsModal.style.display = 'flex';
+});
+
+closeModalBtn.addEventListener('click', () => { settingsModal.style.display = 'none'; });
+settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) settingsModal.style.display = 'none'; });
+
+function pad(n) { return n < 10 ? '0'+n : n; }
+
+// Sınav Tarihlerini Kaydet
+saveExamDatesBtn.addEventListener('click', () => {
+  const parseDate = (str) => {
+    const p = str.match(/(\d{2})\.(\d{2})\.(\d{4})\s(\d{2}):(\d{2})/);
+    if (!p) return null;
+    return `${p[3]}-${p[2]}-${p[1]}T${p[4]}:${p[5]}:00`;
+  };
+  const newYKS = parseDate(yksDateInput.value.trim());
+  const newLGS = parseDate(lgsDateInput.value.trim());
+
+  if (newYKS && newLGS) {
+    window.digitalBoard.yksTargetDate = newYKS;
+    window.digitalBoard.lgsTargetDate = newLGS;
+    localStorage.setItem('yksTargetDate', newYKS);
+    localStorage.setItem('lgsTargetDate', newLGS);
+    window.digitalBoard.updateExamCountdowns();
+    window.digitalBoard.showNotification('Tarihler güncellendi.', 'success');
+  } else {
+    window.digitalBoard.showNotification('Format Hatalı! (Ör: 20.06.2026 10:30)', 'error');
+  }
+});
+
+// Slayt Linkini Kaydet
+saveAnnouncementLinkBtn.addEventListener('click', () => {
+  const link = announcementLinkInput.value.trim();
+  if (link.length > 10) {
+    document.getElementById("announcementFrame").src = link;
+    localStorage.setItem('announcementLink', link);
+    window.digitalBoard.showNotification('Slayt güncellendi.', 'success');
+  }
+});
+
+// === TARİH FORMATLAMA (SAAT FARKINI DÜZELTEN VERSİYON) ===
+function formatExcelDate(dateVal) {
+    if (!dateVal) return null;
+    let date;
+
+    // 1. Durum: Excel Tarihi Sayı Olarak Gelirse (Örn: 45321)
+    if (typeof dateVal === 'number') {
+        date = new Date(Math.round((dateVal - 25569) * 86400 * 1000));
+    } 
+    // 2. Durum: Excel Tarihi "Date" Objesi Olarak Gelirse
+    else if (dateVal instanceof Date) {
+        date = new Date(dateVal.getTime());
+    } 
+    // 3. Durum: Metin Olarak Gelirse (Örn: "17.11.2025")
+    else {
+        return dateVal.toString().trim();
+    }
+
+    // === ÖNEMLİ AYAR ===
+    // Tarih 00:00 olarak gelirse saat farkından önceki güne düşmemesi için
+    // Saati öğlen 14:00'e çekiyoruz.
+    date.setHours(date.getHours() + 14);
+
+    // GG.AA.YYYY formatına çevir
+    function pad(n) { return n < 10 ? '0' + n : n; }
+    return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
+}
+
+// Dosya okuma ve Workbook döndürme yardımcısı
+function readExcelFile(fileInputId, callback) {
+    const input = document.getElementById(fileInputId);
+    if (!input.files || !input.files[0]) {
+        window.digitalBoard.showNotification('Lütfen önce bir dosya seçin!', 'warning');
+        return;
+    }
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+            callback(workbook);
+        } catch (err) {
+            console.error(err);
+            window.digitalBoard.showNotification('Dosya okunamadı: ' + err.message, 'error');
+        }
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+// === NÖBETÇİ LİSTESİ YÜKLEME BUTONU ===
+// NÖBETÇİ LİSTESİ YÜKLEME BUTONU - GÜNCELLENMİŞ
+document.getElementById('btnNobetci').addEventListener('click', () => {
+    readExcelFile('fileNobetci', (workbook) => {
+        let sheet = workbook.Sheets['Nobetci'] || workbook.Sheets['Nöbetçi'] || workbook.Sheets[workbook.SheetNames[0]];
+        
+        // Tarihleri doğru formatla oku
+        const data = XLSX.utils.sheet_to_json(sheet, { 
+            header: 1, 
+            defval: "",
+            raw: false, // Bu önemli: ham değerleri alma
+            dateNF: 'dd.mm.yyyy' // Tarih formatını belirt
+        });
+
+        if (!data || data.length < 2) {
+            window.digitalBoard.showNotification('Liste boş veya hatalı format.', 'error');
+            return;
+        }
+
+        console.log("Yüklenen veri:", data);
+        window.digitalBoard.localData.nobetci = data;
+        localStorage.setItem('localBoardData', JSON.stringify(window.digitalBoard.localData));
+        
+        // HEMEN GÖSTER
+        window.digitalBoard.updateDutyTeachersDisplay();
+        window.digitalBoard.showNotification('Nöbetçi listesi başarıyla yüklendi!', 'success');
+    });
+});
+
+// index.html dosyanızdaki Günlük Söz (Hadis) yükleme kodu
+// === 3. GÜNLÜK SÖZ YÜKLEME BUTONU ===
+document.getElementById('btnSoz').addEventListener('click', () => {
+    readExcelFile('fileSoz', (workbook) => {
+        const sheet = workbook.Sheets[workbook.SheetNames[0]]; 
+        const data = XLSX.utils.sheet_to_json(sheet, { 
+            header: 1, 
+            defval: "",
+            raw: false,
+            dateNF: 'dd.mm.yyyy' 
+        });
+
+        if (!data || data.length < 2) {
+            window.digitalBoard.showNotification('Söz listesi boş veya hatalı format.', 'error');
+            return;
+        }
+
+        const sozMap = {};
+        
+        // İlk satır (başlıklar) atlanarak her satır işlenir.
+        for (let i = 1; i < data.length; i++) {
+            const row = data[i];
+            const dateVal = row[0]; // İlk sütun (Tarih)
+            const sozVal = row[1]; // İkinci sütun (Söz)
+
+            if (dateVal && sozVal) {
+                // HATA BURADAYDI! formatExcelDate fonksiyonu kullanılmalı.
+                const formattedDate = formatExcelDate(dateVal);
+                if (formattedDate) {
+                    sozMap[formattedDate] = sozVal.toString().trim();
+                }
+            }
+        }
+        
+        window.digitalBoard.localData.soz = sozMap;
+        localStorage.setItem('localBoardData', JSON.stringify(window.digitalBoard.localData));
+        
+        // HEMEN GÖSTER
+        window.digitalBoard.updateDailyQuoteDisplay();
+        window.digitalBoard.showNotification('Günlük sözler başarıyla yüklendi!', 'success');
+    });
+});
+// === YEMEK LİSTESİ YÜKLEME BUTONU ===
+document.getElementById('btnMenu').addEventListener('click', () => {
+    readExcelFile('fileMenu', (workbook) => {
+        const sheet = workbook.Sheets[workbook.SheetNames[0]]; 
+        const data = XLSX.utils.sheet_to_json(sheet, { 
+            header: 1, 
+            defval: "",
+            raw: false,
+            dateNF: 'dd.mm.yyyy' 
+        });
+
+        if (!data || data.length < 2) {
+            window.digitalBoard.showNotification('Yemek Listesi boş veya hatalı format.', 'error');
+            return;
+        }
+
+        const menuMap = {};
+        
+        // İlk satır (başlıklar) atlanarak her satır işlenir.
+        for (let i = 1; i < data.length; i++) {
+            const row = data[i];
+            const dateVal = row[0]; // İlk sütun (Tarih)
+            const menuVal = row[1]; // İkinci sütun (Yemekler)
+
+            if (dateVal && menuVal) {
+                // Tarih formatlama fonksiyonunu kullanarak DD.MM.YYYY formatını al
+                const formattedDate = formatExcelDate(dateVal);
+                if (formattedDate) {
+                    menuMap[formattedDate] = menuVal.toString().trim();
+                }
+            }
+        }
+        
+        window.digitalBoard.localData.menu = menuMap;
+        localStorage.setItem('localBoardData', JSON.stringify(window.digitalBoard.localData));
+        
+        // HEMEN GÖSTER
+        window.digitalBoard.updateMenuDisplay();
+        window.digitalBoard.showNotification('Yemek listesi başarıyla yüklendi!', 'success');
+    });
+});
+// === 4. KAYAN YAZI (MARQUEE) YÜKLEME ===
+document.getElementById('btnMarquee').addEventListener('click', () => {
+    readExcelFile('fileMarquee', (workbook) => {
+        const sheet = workbook.Sheets[workbook.SheetNames[0]]; // İlk sayfayı al
+        const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        
+        if (data.length > 0 && data[0].length > 0) {
+            const text = data[0][0].toString().trim();
+            window.digitalBoard.localData.marquee = text;
+            localStorage.setItem('localBoardData', JSON.stringify(window.digitalBoard.localData));
+            window.digitalBoard.updateMarqueeDisplay();
+            window.digitalBoard.showNotification('Kayan yazı güncellendi.', 'success');
+        } else {
+            window.digitalBoard.showNotification('Dosya boş görünüyor.', 'warning');
+        }
+    });
+});
+
+// Uygulamayı Başlat
+document.addEventListener('DOMContentLoaded', () => {
+  window.digitalBoard = new DigitalBoard();
+});
+
+</script>
+</body>
+</html>
