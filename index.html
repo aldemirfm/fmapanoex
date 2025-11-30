@@ -144,6 +144,7 @@ main {
   grid-column: 1;
   grid-row: 1 / 3;
   background: linear-gradient(180deg, #000000, #202d58);
+  padding: 0;
 }
 
 #ortakutuBox {
@@ -261,9 +262,8 @@ main {
 }
 
 #currentWeather img { 
-  /* BURASI GÜNCELLENDİ: 10vh -> 16vh */
-  width: 25vh; 
-  height: 25vh; 
+  width: 15vh;  /*İKON BÜYÜKLÜĞÜ*/
+  height: 15vh; 
   animation: weatherIconMove 3s ease-in-out infinite,
   weatherIconGlow 3s ease-in-out infinite;
   filter: drop-shadow(0 0 10px rgba(0, 140, 255, 0.8));
@@ -280,15 +280,22 @@ main {
   line-height: 1;
   text-shadow: 0 0 5px #002bff;
   animation: neonGlow 2s ease-in-out infinite alternate;
+  margin-left: 50px;
+}
+
+#tempRange {
+  /* ANLIK DEĞERİN YERİNİ AYARLIYOR */
+  margin-left: 50px;
 }
 
 #desc {
-  font-size: 3vh; 
+  font-size: 2vh; 
   font-weight: 900;
   color: #ffffff;
   position: relative;
   z-index: 2;
   text-shadow: 0 0 5px #002bff;
+  margin-left: 50px;
 }
 
 .forecast { 
@@ -308,7 +315,7 @@ main {
   display: flex; 
   flex-direction: column; 
   align-items: center; 
-  padding: px; 
+  padding: 0px; 
 }
 
 .forecast .dayName { 
@@ -996,7 +1003,7 @@ loadInitialData() {
     const maxWidth = container.clientWidth;
     let fontSize = 2;
     container.style.fontSize = fontSize + "px";
-    while(container.scrollHeight <= maxHeight && container.scrollWidth <= maxWidth && fontSize < 35) {
+    while(container.scrollHeight <= maxHeight && container.scrollWidth <= maxWidth && fontSize < 40) {
       fontSize += 1;
       container.style.fontSize = fontSize + "px";
     }
